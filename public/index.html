@@ -1,11 +1,10 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agora Voice Call</title>
-    <script src="https://cdn.agora.io/sdk/release/AgoraRTC_N.js"></script> <!-- Load Agora SDK -->
+    <script src="https://cdn.agora.io/sdk/release/AgoraRTC_N.js"></script>
     <style>
         #remote-playerlist {
             margin-top: 10px;
@@ -25,19 +24,17 @@
     <div id="remote-playerlist"></div>
 
     <script>
-        const APP_ID = '36a8711c6a374888bf3de28263b4b482'; // Replace with your Agora App ID
-        const channelName = 'test'; // Channel name
-        let client; // Agora client instance
-        let localAudioTrack; // Local audio track
+        const APP_ID = '36a8711c6a374888bf3de28263b4b482';
+        const channelName = 'test';
+        let client;
+        let localAudioTrack;
 
-        // Initialize Agora client
         async function initializeClient() {
             client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
             client.on('user-published', handleUserPublished);
             client.on('user-unpublished', handleUserUnpublished);
         }
 
-        // Handle a user publishing their stream
         async function handleUserPublished(user, mediaType) {
             await client.subscribe(user, mediaType);
             if (mediaType === 'audio') {
@@ -47,12 +44,10 @@
             }
         }
 
-        // Handle a user unsubscribing or leaving
         function handleUserUnpublished(user) {
             removeRemoteUser(user.uid);
         }
 
-        // Add a remote user to the UI
         function addRemoteUser(uid) {
             const playerContainer = document.createElement('div');
             playerContainer.className = 'remote-player';
@@ -61,7 +56,6 @@
             document.getElementById('remote-playerlist').appendChild(playerContainer);
         }
 
-        // Remove a remote user from the UI
         function removeRemoteUser(uid) {
             const playerContainer = document.getElementById(`player-${uid}`);
             if (playerContainer) {
@@ -69,10 +63,9 @@
             }
         }
 
-        // Join the call
         document.getElementById('join').onclick = async () => {
             try {
-                const response = await fetch(`/generateToken?channelName=${channelName}`);
+                const response = await fetch(`/api/generateToken?channelName=${channelName}`);
                 const data = await response.json();
                 const token = data.token;
 
@@ -89,12 +82,11 @@
             }
         };
 
-        // Leave the call
         document.getElementById('leave').onclick = async () => {
             try {
                 await client.leave();
                 localAudioTrack.close();
-                document.getElementById('remote-playerlist').innerHTML = ''; // Clear remote players
+                document.getElementById('remote-playerlist').innerHTML = '';
 
                 console.log('Left the call');
                 document.getElementById('join').disabled = false;

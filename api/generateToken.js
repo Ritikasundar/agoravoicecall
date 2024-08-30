@@ -1,18 +1,9 @@
-const express = require('express');
-const path = require('path');
 const { RtcTokenBuilder, RtcRole } = require('agora-access-token');
-const app = express();
-const port = 4000;
 
-// Agora credentials
-const APP_ID = '36a8711c6a374888bf3de28263b4b482'; // Replace with your Agora App ID
-const APP_CERTIFICATE = 'ac4a4eae979d47f9a423710e01bd5b59'; // Replace with your Agora App Certificate
+const APP_ID = '36a8711c6a374888bf3de28263b4b482';
+const APP_CERTIFICATE = 'ac4a4eae979d47f9a423710e01bd5b59';
 
-// Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
-
-// API endpoint for token generation
-app.get('/api/generateToken', (req, res) => {
+module.exports = async (req, res) => {
   const channelName = req.query.channelName;
   const uid = req.query.uid || 0;
   const role = RtcRole.PUBLISHER;
@@ -34,9 +25,4 @@ app.get('/api/generateToken', (req, res) => {
   );
 
   res.json({ token });
-});
-
-// Start the server
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+};
